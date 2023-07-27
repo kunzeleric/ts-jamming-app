@@ -1,9 +1,12 @@
 import axios from 'axios';
+import { Song } from '../context/SongsContext';
 
-interface ResponseType {
-    data: [],
-    total: number,
-    next: string
+export interface ResponseType {
+    data: {
+        data: Song[],
+        total: number,
+        next: string
+    }
 }
 
 export class Deezer {
@@ -20,8 +23,8 @@ export class Deezer {
         };
 
         try {
-            const response: ResponseType = await axios.request(options);
-            return response;
+            const { data }: ResponseType = await axios.request(options)
+            return data.data
         } catch (error) {
             console.error(error);
         }
