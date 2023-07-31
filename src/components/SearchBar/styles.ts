@@ -6,6 +6,7 @@ export const SearchFormContainer = styled.form`
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    margin-bottom: 2rem;
 
     input {
       flex: 1;

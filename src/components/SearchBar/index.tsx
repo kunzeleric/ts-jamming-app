@@ -18,8 +18,8 @@ export const SearchBar = () => {
 
   const { register, handleSubmit, formState: { isSubmitting }, reset} = useForm<SearchFormInput>({resolver: zodResolver(searchFormSchema)})
 
-  function handleSearchSongs(data: SearchFormInput) {
-    fetchData(data.query)
+  async function handleSearchSongs(data: SearchFormInput) {
+    await fetchData(data.query)
     reset()
   }
 

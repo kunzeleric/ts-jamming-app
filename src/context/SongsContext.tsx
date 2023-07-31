@@ -23,7 +23,10 @@ export interface Song {
 
 interface SongsContextType {
   songs: Song[],
+  playlist: Song[],
   fetchData: (query: string) => Promise<void>;
+  handleAddSong: (song: Song) => void;
+  handleRemoveSong: (song: Song) => void;
 }
 
 export const SongsContext = createContext({} as SongsContextType)
@@ -34,6 +37,7 @@ interface SongsContextProviderProps {
 
 export function SongsContextProvider({ children }: SongsContextProviderProps) {
   const [songs, setSongs] = useState<Song[]>([])
+  const [playlist ,setPlaylist] = useState<Song[]>([])
 
   async function fetchData(query: string): Promise<void> {
     const response = await Deezer.searchTrack(query);
@@ -42,8 +46,19 @@ export function SongsContextProvider({ children }: SongsContextProviderProps) {
     }
   }
 
+  const handleAddSong = (song: Song) => {
+    setPlaylist((prevTracks) => [...prevTracks, song])
+  }
+
+  const handleRemoveSong = (song: Song) => {
+    setPlaylist((prevTracks) => prevTracks.filter((track) => {
+      return track.id !== song.id
+    }))
+  }
+
   return (
-    <SongsContext.Provider value={{ songs, fetchData }}>
+    <SongsContext.Provider 
+      value={{ songs, playlist, fetchData, handleAddSong, handleRemoveSong }}>
       {children}
     </SongsContext.Provider>
   )
