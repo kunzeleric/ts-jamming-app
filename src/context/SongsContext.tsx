@@ -1,43 +1,47 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { ReactNode, createContext, useState } from "react";
+import { ReactNode, createContext, useMemo, useState } from "react";
 import { Deezer } from "../api/Deezer";
+import { toast } from "react-toastify";
 
 interface AlbumType {
-  cover: string
-  title: string
+  cover: string;
+  title: string;
 }
 
 interface ArtistProps {
-  name: string
-  picture: string
-  tracklist: string
+  name: string;
+  picture: string;
+  tracklist: string;
 }
 
 export interface Song {
-  id: number,
-  preview: string,
-  title: string,
-  album: AlbumType,
-  artist: ArtistProps
+  id: number;
+  preview: string;
+  title: string;
+  album: AlbumType;
+  artist: ArtistProps;
+  isInPlaylist: boolean | null;
 }
 
 interface SongsContextType {
-  songs: Song[],
-  playlist: Song[],
+  songs: Song[];
+  playlist: Song[];
   fetchData: (query: string) => Promise<void>;
   handleAddSong: (song: Song) => void;
   handleRemoveSong: (song: Song) => void;
 }
 
-export const SongsContext = createContext({} as SongsContextType)
+export const SongsContext = createContext({} as SongsContextType);
 
 interface SongsContextProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function SongsContextProvider({ children }: SongsContextProviderProps) {
-  const [songs, setSongs] = useState<Song[]>([])
-  const [playlist ,setPlaylist] = useState<Song[]>([])
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [playlist, setPlaylist] = useState<Song[]>([]);
+
+  const notify = (msg?: string) => toast(msg);
 
   async function fetchData(query: string): Promise<void> {
     const response = await Deezer.searchTrack(query);
@@ -47,19 +51,33 @@ export function SongsContextProvider({ children }: SongsContextProviderProps) {
   }
 
   const handleAddSong = (song: Song) => {
-    setPlaylist((prevTracks) => [...prevTracks, song])
-  }
+    notify("Song added!");
+    setPlaylist((prevTracks) => [
+      ...prevTracks,
+      { ...song, isInPlaylist: true },
+    ]);
+
+    setSongs((prevTracks) =>
+      prevTracks.filter((track) => track.id !== song.id)
+    );
+  };
 
   const handleRemoveSong = (song: Song) => {
-    setPlaylist((prevTracks) => prevTracks.filter((track) => {
-      return track.id !== song.id
-    }))
-  }
+    notify("Song removed!");
+    setPlaylist((prevTracks) =>
+      prevTracks.filter((track) => track.id !== song.id)
+    );
+    setSongs((prevTracks) => [...prevTracks, { ...song, isInPlaylist: false }]);
+  };
+
+  const contextValue = useMemo(
+    () => ({ songs, playlist, fetchData, handleAddSong, handleRemoveSong }),
+    [songs, playlist, fetchData, handleAddSong, handleRemoveSong]
+  );
 
   return (
-    <SongsContext.Provider 
-      value={{ songs, playlist, fetchData, handleAddSong, handleRemoveSong }}>
+    <SongsContext.Provider value={contextValue}>
       {children}
     </SongsContext.Provider>
-  )
+  );
 }

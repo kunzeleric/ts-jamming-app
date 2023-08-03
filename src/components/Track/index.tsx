@@ -1,14 +1,21 @@
 import { useContext } from "react";
-import { Song, SongsContext } from "../../context/SongsContext"
-import { ArtistContainer, ButtonContainer, ButtonIcon, TrackContainer, TrackInfo } from "./styles";
+import { Song, SongsContext } from "../../context/SongsContext";
+import {
+  ArtistContainer,
+  ButtonContainer,
+  ButtonIcon,
+  TrackContainer,
+  TrackInfo,
+} from "./styles";
 import { PlusCircle, PlayPause } from "@phosphor-icons/react";
+import { MinusCircle } from "phosphor-react";
 
 interface TrackProps {
   song: Song;
 }
 
 export const Track = ({ song }: TrackProps) => {
-  const { handleAddSong } = useContext(SongsContext)
+  const { handleAddSong, handleRemoveSong } = useContext(SongsContext);
 
   return (
     <TrackContainer>
@@ -21,13 +28,19 @@ export const Track = ({ song }: TrackProps) => {
         </ArtistContainer>
       </TrackInfo>
       <ButtonContainer>
-        <ButtonIcon onClick={() => handleAddSong(song)}>
-          <PlusCircle className="icon" size={32} />
-        </ButtonIcon>
+        {!song.isInPlaylist ? (
+          <ButtonIcon onClick={() => handleAddSong(song)}>
+            <PlusCircle className="icon" size={32} />
+          </ButtonIcon>
+        ) : (
+          <ButtonIcon onClick={() => handleRemoveSong(song)}>
+            <MinusCircle className="icon" size={32} />
+          </ButtonIcon>
+        )}
         <ButtonIcon>
           <PlayPause className="icon" size={32} />
         </ButtonIcon>
       </ButtonContainer>
     </TrackContainer>
-  )
-}
+  );
+};
