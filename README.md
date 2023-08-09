@@ -9,7 +9,7 @@ I made this app to further develop my Typescript abilities, to practice project 
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+<img src="https://github.com/kunzeleric/ts-jamming-app/assets/114115220/05c0205d-a9f4-4146-8d2a-b88c310f2032" width="600" height="600" />
 
 
 ## Technologies
